@@ -1,5 +1,7 @@
 # GIT Metadata Buildpack
 
+[![CircleCI](https://img.shields.io/circleci/project/github/bstick12/git-metadata-buildpack.svg)](https://circleci.com/gh/bstick12/git-metadata-buildpack) 
+
 This is a [Cloud Native Buildpack V3](https://buildpacks.io/) that adds GIT metadata as a layer to the built container.
 
 This buildpack is designed to work in collaboration with other buildpacks.
