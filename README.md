@@ -10,6 +10,20 @@ This buildpack is designed to work in collaboration with other buildpacks.
 pack build <image-name> --builder cloudfoundry/cnb:cflinuxfs3 --buildpack /path/to/git-metadata-buildpack 
 ```
 
+The following layer will be added to your container
+
+```
+/layers/io.bstick12.buildpacks.git-metadata/git-metadata/
+```
+
+The `git-metadata.toml` file will contain the following elements
+
+```
+sha = "<sha>"
+branch = "<remote>/<branch>"
+remote = "<remote url>"
+```
+
 ## Development
 
 `scripts/unit.sh` - Runs unit tests for the buildpack
