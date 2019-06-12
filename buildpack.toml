@@ -1,0 +1,11 @@
+[buildpack]
+id = "io.bstick12.buildpacks.git-metadata"
+version = "0.1.0"
+name = "GIT Metadata buildpack"
+
+[metadata]
+include_files = ["bin/build", "bin/detect", "buildpack.toml"]
+pre_package = "./scripts/build.sh"
+
+[[stacks]]
+id = "org.cloudfoundry.stacks.cflinuxfs3"
