@@ -11,6 +11,10 @@ jobs:
           command: |
             ./scripts/unit.sh
       - run:
+          name: post coverage
+          command: |
+            bash <(curl -s https://codecov.io/bash)
+      - run:
           name: build
           command: |
             ./scripts/build.sh

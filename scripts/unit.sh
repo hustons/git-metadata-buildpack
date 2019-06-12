@@ -4,7 +4,7 @@ set -uo pipefail
 cd "$( dirname "${BASH_SOURCE[0]}" )/.."
 
 echo "Run Buildpack Unit Tests"
-go test ./... -v -run Unit -coverprofile=coverage.out
+go test ./... -v -run Unit -coverprofile=coverage.txt
 exit_code=$?
 
 if [ "$exit_code" != "0" ]; then

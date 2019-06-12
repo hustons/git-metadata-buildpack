@@ -1,6 +1,8 @@
 # GIT Metadata Buildpack
 
 [![CircleCI](https://img.shields.io/circleci/project/github/bstick12/git-metadata-buildpack.svg)](https://circleci.com/gh/bstick12/git-metadata-buildpack) 
+[![Download](https://api.bintray.com/packages/bstick12/buildpacks/git-metadata-buildpack/images/download.svg?version=0.1.0) ](https://bintray.com/bstick12/buildpacks/git-metadata-buildpack/0.1.0/link)
+[![Codecov](https://img.shields.io/codecov/c/github/bstick12/git-metadata-buildpack.svg)](https://codecov.io/gh/bstick12/git-metadata-buildpack)
 
 This is a [Cloud Native Buildpack V3](https://buildpacks.io/) that adds GIT metadata as a layer to the built container.
 
