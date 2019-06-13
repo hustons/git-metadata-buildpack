@@ -11,7 +11,7 @@ This buildpack is designed to work in collaboration with other buildpacks.
 ## Usage
 
 ```
-pack build <image-name> --builder cloudfoundry/cnb:cflinuxfs3 --buildpack /path/to/git-metadata-buildpack 
+pack build <image-name> --builder cloudfoundry/cnb:cflinuxfs3 --buildpack https://bintray.com/bstick12/buildpacks/download_file?file_path=git-metadata-buildpack.tgz
 ```
 
 The following layer will be added to your container
