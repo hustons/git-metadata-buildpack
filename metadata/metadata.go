@@ -3,11 +3,12 @@ package metadata
 import (
 	"errors"
 	"fmt"
-	"github.com/bstick12/git-metadata-buildpack/internal"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/bstick12/git-metadata-buildpack/internal"
 
 	"github.com/BurntSushi/toml"
 	"github.com/buildpack/libbuildpack/buildplan"
@@ -25,10 +26,13 @@ type Metadata struct {
 	Remote string `toml:"remote"`
 }
 
+func (md Metadata) Identity() (string, string) {
+	return md.Sha, Dependency
+}
+
 var CmdRunner = internal.CmdRunner
 
 func Contribute(context build.Build) error {
-
 	err := CmdRunner(ioutil.Discard, ioutil.Discard, nil, "git", "status").Run()
 	if err != nil {
 		return errors.New("not identified as git project")
@@ -39,7 +43,7 @@ func Contribute(context build.Build) error {
 		return errors.New(fmt.Sprintf("layer %s is not wanted", Dependency))
 	}
 
-	layer := context.Layers.HelperLayer(Dependency, "GIT Metadata Layer")
+	layer := context.Layers.Layer(Dependency)
 
 	md := Metadata{}
 
@@ -67,8 +71,7 @@ func Contribute(context build.Build) error {
 	}
 	md.Remote = strings.TrimSuffix(string(remote), "\n")
 
-	var metadataHelperLayerContributor = func(artifact string, layer layers.HelperLayer) error {
-
+	var metadataHelperLayerContributor = func(layer layers.Layer) error {
 		layer.Touch()
 		l := layer.Layer
 		filename := filepath.Join(l.Root, "git-metadata.toml")
@@ -85,8 +88,8 @@ func Contribute(context build.Build) error {
 		return toml.NewEncoder(file).Encode(md)
 	}
 
-	if err := layer.Contribute(metadataHelperLayerContributor, flags(dependency)...); err != nil {
-		layer.Logger.Error("Failed to contribute helper layer [%v]", err)
+	if err := layer.Contribute(md, metadataHelperLayerContributor, flags(dependency)...); err != nil {
+		layer.Logger.Error("Failed to contribute layer [%v]", err)
 		return err
 	}
 
