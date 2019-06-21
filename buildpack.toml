@@ -1,6 +1,6 @@
 [buildpack]
 id = "io.bstick12.buildpacks.git-metadata"
-version = "0.1.0"
+version = "0.2.0"
 name = "GIT Metadata buildpack"
 
 [metadata]
