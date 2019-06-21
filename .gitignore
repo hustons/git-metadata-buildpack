@@ -1,6 +1,7 @@
 git-metadata-buildpack*
 git-metadata-buildpack*/
-coverage.out
+coverage.txt
 bin/
+vendor/
 
 .idea/
