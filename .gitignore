@@ -3,5 +3,6 @@ git-metadata-buildpack*/
 coverage.txt
 bin/
 vendor/
-
+.bin/
 .idea/
+compiled/
