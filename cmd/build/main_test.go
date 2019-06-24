@@ -1,11 +1,8 @@
 package main_test
 
 import (
-	"errors"
-	"github.com/bstick12/git-metadata-buildpack/internal"
 	"github.com/bstick12/git-metadata-buildpack/metadata"
 	"github.com/bstick12/git-metadata-buildpack/utils"
-	"io"
 	"os"
 	"testing"
 
@@ -38,49 +35,35 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 			defer utils.ResetEnv(os.Environ())
 			os.Clearenv()
 
-			metadata.CmdRunner = func (_, _ io.Writer, _ io.Reader, _ string, _ ...string) internal.Runner {
-				return &internal.TestRunner {
-					Runner: func() error {
-						return nil
-					},
-					CombinedOutputter: func() ([]byte, error) {
-						return []byte{}, nil
-					},
-				}
-			}
-
 			factory.Build.BuildPlan = buildplan.BuildPlan{
 				metadata.Dependency: buildplan.Dependency{
 					Metadata: buildplan.Metadata{
+						"build":  false,
 						"launch": true,
+						"sha":    "7aa636e253c4115df34b1f2fab526739cbf27570",
+						"branch": "fork/master",
+						"remote": "git@github.com/example/example.git",
 					},
 				},
 			}
 			code, err := cmdBuild.RunBuild(factory.Build)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(code).To(Equal(build.SuccessStatusCode))
-
 			metadataLayer := factory.Build.Layers.Layer(metadata.Dependency)
 			Expect(metadataLayer).To(test.HaveLayerMetadata(false, false, true))
+			md := metadata.Metadata{}
+			metadataLayer.ReadMetadata(&md)
+			Expect(md).To(Equal(metadata.Metadata{
+				Sha : "7aa636e253c4115df34b1f2fab526739cbf27570",
+				Branch: "fork/master",
+				Remote: "git@github.com/example/example.git",
+			}))
 
 		})
 
 		it("should fail if it doesn't contribute", func() {
-
 			defer utils.ResetEnv(os.Environ())
 			os.Clearenv()
-
-			metadata.CmdRunner = func (_, _ io.Writer, _ io.Reader, _ string, _ ...string) internal.Runner {
-				return &internal.TestRunner {
-					Runner: func() error {
-						return errors.New("error")
-					},
-					CombinedOutputter: func() ([]byte, error) {
-						return []byte{}, nil
-					},
-				}
-			}
-
 			code, err := cmdBuild.RunBuild(factory.Build)
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("Failed to find build plan"))
