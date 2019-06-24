@@ -16,13 +16,13 @@ const (
 	Dependency = "git-metadata"
 )
 
-type Metadata struct {
+type GitMetadata struct {
 	Sha    string `toml:"sha"`
 	Branch string `toml:"branch"`
 	Remote string `toml:"remote"`
 }
 
-func (md Metadata) Identity() (string, string) {
+func (md GitMetadata) Identity() (string, string) {
 	return md.Sha, Dependency
 }
 
@@ -36,7 +36,7 @@ func Contribute(context build.Build) error {
 	layer := context.Layers.Layer(Dependency)
 
 
-	md := Metadata{
+	md := GitMetadata{
 		Sha: dependency.Metadata["sha"].(string),
 		Branch: dependency.Metadata["branch"].(string),
 		Remote: dependency.Metadata["remote"].(string),

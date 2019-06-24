@@ -51,9 +51,9 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 			Expect(code).To(Equal(build.SuccessStatusCode))
 			metadataLayer := factory.Build.Layers.Layer(metadata.Dependency)
 			Expect(metadataLayer).To(test.HaveLayerMetadata(false, false, true))
-			md := metadata.Metadata{}
+			md := metadata.GitMetadata{}
 			metadataLayer.ReadMetadata(&md)
-			Expect(md).To(Equal(metadata.Metadata{
+			Expect(md).To(Equal(metadata.GitMetadata{
 				Sha : "7aa636e253c4115df34b1f2fab526739cbf27570",
 				Branch: "fork/master",
 				Remote: "git@github.com/example/example.git",

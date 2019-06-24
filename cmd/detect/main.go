@@ -67,9 +67,9 @@ func RunDetect(context detect.Detect) (int, error) {
 
 }
 
-func GetMetadata(log logger.Logger) (metadata.Metadata, error) {
+func GetMetadata(log logger.Logger) (metadata.GitMetadata, error) {
 
-	md := metadata.Metadata{}
+	md := metadata.GitMetadata{}
 
 	log.SubsequentLine("Retrieving GIT Metadata")
 	gitsha, err := CmdRunner(nil, nil, nil, "git", "rev-parse", "HEAD").CombinedOutput()
