@@ -33,7 +33,7 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 	var statusArgs = []string{"status"}
 	var shaArgs = []string{"rev-parse", "HEAD"}
 	var branchArgs = []string{"rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"}
-	var remoteArgs = []string{"remote", "get-url", "fork"}
+	var remoteArgs = []string{"remote", "get-url", "origin"}
 
 	var factory *test.DetectFactory
 
@@ -90,7 +90,7 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 				Stdin:  nil,
 				Args:   branchArgs,
 				Return: nil,
-				Output: []byte("fork/master\n"),
+				Output: []byte("origin/master\n"),
 			}
 			cmdFunctions[lookupKey(remoteArgs)] = internal.CmdFunctionParams{
 				Stdout: nil,
@@ -117,7 +117,31 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 						"build":  false,
 						"launch": true,
 						"sha": "7aa636e253c4115df34b1f2fab526739cbf27570",
-						"branch": "fork/master",
+						"branch": "origin/master",
+						"remote": "git@github.com/example/example.git",
+					},
+				},
+			}))
+		})
+
+		it("should add git-metadata-buildpack to the buildplan when HEAD detached", func() {
+			defer utils.ResetEnv(os.Environ())
+			os.Clearenv()
+
+			cmdDetect.CmdRunner = CmdSuccess
+
+			changeCmdReturn(lookupKey(branchArgs), errors.New("fatal: HEAD does not point to a branch"))
+
+			code, err := cmdDetect.RunDetect(factory.Detect)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(code).To(Equal(detect.PassStatusCode))
+			Expect(factory.Output).To(Equal(buildplan.BuildPlan{
+				metadata.Dependency: buildplan.Dependency{
+					Metadata: buildplan.Metadata{
+						"build":  false,
+						"launch": true,
+						"sha": "7aa636e253c4115df34b1f2fab526739cbf27570",
+						"branch": "origin/DETACHED",
 						"remote": "git@github.com/example/example.git",
 					},
 				},
@@ -139,7 +163,7 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 			})
 
 			it("should fail to get SHA", func() {
-				ret := errors.New("Failed to get git SHA")
+				ret := errors.New("failed to get git SHA")
 				changeCmdReturn(lookupKey(shaArgs), ret)
 				defer utils.ResetEnv(os.Environ())
 				os.Clearenv()
@@ -151,21 +175,8 @@ func testDetect(t *testing.T, when spec.G, it spec.S) {
 				Expect(ret).To(Equal(err))
 			})
 
-			it("should fail to get branch", func() {
-				ret := errors.New("Failed to get branch")
-				changeCmdReturn(lookupKey(branchArgs), ret)
-				defer utils.ResetEnv(os.Environ())
-				os.Clearenv()
-
-				cmdDetect.CmdRunner = CmdFailure
-				code, err := cmdDetect.RunDetect(factory.Detect)
-				Expect(code).To(Equal(detect.FailStatusCode))
-				Expect(err).To(HaveOccurred())
-				Expect(ret).To(Equal(err))
-			})
-
 			it("should fail to get remote url", func() {
-				ret := errors.New("Failed to get remote url")
+				ret := errors.New("failed to get remote url")
 				changeCmdReturn(lookupKey(remoteArgs), ret)
 				defer utils.ResetEnv(os.Environ())
 				os.Clearenv()

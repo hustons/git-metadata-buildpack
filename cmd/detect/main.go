@@ -81,8 +81,8 @@ func GetMetadata(log logger.Logger) (metadata.GitMetadata, error) {
 	md.Sha = strings.TrimSuffix(string(gitsha), "\n")
 	branch, err := CmdRunner(nil, nil, nil, "git", "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}").CombinedOutput()
 	if err != nil {
-		log.Error("Failed to get git branch [%v]", err)
-		return md, err
+		branch = []byte("origin/DETACHED")
+		log.SubsequentLine("Failed to get branch assuming detached HEAD")
 	}
 
 	md.Branch = strings.TrimSuffix(string(branch), "\n")
