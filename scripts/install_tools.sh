@@ -45,18 +45,6 @@ install_pack() {
         exit 1
     fi
 
-    # don't fail out if lpass is not found
-    set -e
-    set +u
-    (GIT_TOKEN=${GIT_TOKEN:-"$(lpass show Shared-CF\ Buildpacks/concourse-private.yml | grep buildpacks-github-token | cut -d ' ' -f 2)"}) || true
-    set +e
-
-    CURL_DATA=""
-    if [[ ! -z "$GIT_TOKEN" ]]; then
-        CURL_DATA="Authorization: token $GIT_TOKEN"
-    fi
-    set -u
-
     if [ "$PACK_VERSION" != "latest" ]; then
         echo "Installing pack $PACK_VERSION"
 
@@ -67,10 +55,9 @@ install_pack() {
     fi
 
     if [[ $OS == "macos" ]]; then
-
-        ARTIFACT_URL=$(curl $CURL_DATA -s https://api.github.com/repos/buildpack/pack/releases/latest |   jq --raw-output '.assets[1] | .browser_download_url')
+        ARTIFACT_URL=$(curl -s https://api.github.com/repos/buildpack/pack/releases/latest |   jq --raw-output '.assets[1] | .browser_download_url')
     else
-        ARTIFACT_URL=$(curl $CURL_DATA -s https://api.github.com/repos/buildpack/pack/releases/latest |   jq --raw-output '.assets[0] | .browser_download_url')
+        ARTIFACT_URL=$(curl -s https://api.github.com/repos/buildpack/pack/releases/latest |   jq --raw-output '.assets[0] | .browser_download_url')
     fi
 
     expand $ARTIFACT_URL
